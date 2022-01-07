@@ -21,13 +21,15 @@ RUN echo "CSRF_TRUSTED_ORIGINS = ['https://myhealthchecks.herokuapp.com']" >> he
 ENV DEBUG=False
 ENV SITE_NAME=Healthchecks
 ENV REGISTRATION_OPEN=False
+ENV DB=postgres
 ARG username
 ARG password
+ARG database_url
 
-RUN healthchecks/manage.py migrate
-RUN healthchecks/manage.py compress
-RUN echo yes | healthchecks/manage.py collectstatic
+RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && healthchecks/manage.py migrate
+RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && healthchecks/manage.py compress
+RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && echo yes | healthchecks/manage.py collectstatic
 
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${username}', '${username}', '${password}')" | healthchecks/manage.py shell
+RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${username}', '${username}', '${password}')" | healthchecks/manage.py shell
 
 ENTRYPOINT ["./init.sh"]
