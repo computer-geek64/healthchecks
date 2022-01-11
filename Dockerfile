@@ -21,6 +21,18 @@ ENV SITE_NAME=Healthchecks
 ENV SITE_ROOT=https://myhealthchecks.herokuapp.com
 ENV REGISTRATION_OPEN=False
 ENV DB=postgres
+
+ARG email_use_tls=True
+ENV EMAIL_USE_TLS=${email_use_tls}
+ARG email_port=587
+ENV EMAIL_PORT=${email_port}
+ARG email_host=smtp.gmail.com
+ENV EMAIL_HOST=${email_host}
+ARG email_host_user
+ENV EMAIL_HOST_USER=${email_host_user}
+ARG email_host_password
+ENV EMAIL_HOST_PASSWORD=${email_host_password}
+
 ARG username
 ARG password
 ARG database_url
