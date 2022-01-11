@@ -16,15 +16,16 @@ RUN chmod 644 healthchecks_cleanup.cron
 RUN cp healthchecks_cleanup.cron /etc/cron.d/healthchecks_cleanup.cron
 RUN crontab /etc/cron.d/healthchecks_cleanup.cron
 
-RUN echo "CSRF_TRUSTED_ORIGINS = ['https://myhealthchecks.herokuapp.com']" >> healthchecks/hc/settings.py
-
 ENV DEBUG=False
 ENV SITE_NAME=Healthchecks
+ENV SITE_ROOT=https://myhealthchecks.herokuapp.com
 ENV REGISTRATION_OPEN=False
 ENV DB=postgres
 ARG username
 ARG password
 ARG database_url
+
+RUN echo "CSRF_TRUSTED_ORIGINS = ['${SITE_ROOT}']" >> healthchecks/hc/settings.py
 
 RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && healthchecks/manage.py migrate
 RUN export DATABASE_URL=${database_url} && . ./db_env_init.sh && healthchecks/manage.py compress
